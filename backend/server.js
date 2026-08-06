@@ -8,7 +8,21 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({ origin: "https://employee-enrollment-system-kappa.vercel.app", credentials: true }));app.use(express.json());
+const allowedOrigins = [
+  "https://employee-enrollment-system-kappa.vercel.app",
+  "http://localhost:5173"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
